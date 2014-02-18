@@ -1,0 +1,118 @@
+\documentclass{protokoll}
+
+\usepackage[swedish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[]{lmodern}
+\bild{logo}
+\typ{#(.Möte)#}  %Styrelsemöte|Årsmöte|medlemsmöte etc.
+\datum{#(.Datum)#}  %Datum, form 0000-00-00
+\organ{#(.Organ)#}   %Styrelsen|Mötet|Medlemmarna etc.
+\organisation{Luleå Universitets Datorförening}
+\forordf{#(.Styrelse.Ordförande)#} 	% Föreningsordförande
+\ordf{#(.Mötesordförande)#} 			% Mötesordförande
+\sekr{#(.Styrelse.Sekreterare)#} 			% Mötessekreterare
+\justA{#(.JusterareA)#} 		% Justerare A
+\justB{#(.JusterareB)#} 		% Justerare B
+
+\newcounter{cUPunkt}
+\newcounter{cUPunktCheck}
+\begin{document}
+  
+\newcommand{\subpunkt}{
+	\ifthenelse{ %If
+		\equal{
+			\arabic{cUPunktCheck}
+		} {
+			\arabic{section}
+		}
+	} {
+		%Then
+	} {
+		\setcounter{cUPunkt}{0} %Else
+	}
+		\stepcounter{cUPunkt}
+		\setcounter{cUPunktCheck}{\arabic{section}}
+	\hspace{0.5cm}\arabic{section}.\arabic{cUPunkt}. }
+
+	\begin{motesfakta}
+    \tid{#(.Starttid)#-#(.Sluttid)#}  %Tid, på formen 12:34. Använd search/replace.
+	  \plats{#(.Plats)#}
+    \narvarande
+    \person{\skrivordf}{Ordförande}
+    \person{\skrivsekr}{Sekreterare}
+    \person{\skrivjustA}{#(.JustAtitel)# tillika justeringsperson}
+    \person{\skrivjustB}{#(.JustBtitel)# tillika justeringsperson}
+    #( range .Närvarande)#
+    \person{#(.Namn)#}{#(.Titel)#}
+    #(end)#
+    #( range .Adjungeringar )#
+    \person{#(.)#}{Adjungerad}
+    #(end)#
+
+  \end{motesfakta}
+
+  \punkt{Mötets högtidliga öppnande}
+
+  \skrivforordf förklarade mötet öppnat #(.startid)#.
+
+  \punkt{Formalia}
+
+  \begin{enumerate}
+
+    \item{\textbf{Val av mötesordförande}
+
+    \skrivordf valdes till mötesordförande.}
+
+    \item{\textbf{Val av mötessekreterare}
+
+    \skrivsekr valdes till mötessekreterare.}
+
+    \item{\textbf{Val av två justeringspersoner tillika rösträknare}
+
+    \skrivjustA och \skrivjustB valdes till justeringspersoner.}
+		
+    \item{\textbf{Mötets behöriga utlysande}
+
+    % Change as appropriate
+    #(.Möte)#t förklaras behörigt.}
+
+    \item{\textbf{Eventuella adjungeringar}
+    #(if .Adjungeringar)#
+    Styrelsen adjungerar:
+    #(end)#
+    #(range .Adjungeringar)#
+    #(.)#
+    #(else)#
+    Inga adjungeringar.
+    #(end)#
+	}
+
+  \end{enumerate}
+  
+\newpage
+  #(range .Punkter)#  
+  \punkt{#(.Titel)#}
+  #(.Brödtext)#
+  #(if .Beslut)#
+  \begin{beslut}
+    #(range .Beslut)#
+    \att #(.)#
+    #(end)#
+  #(end)#
+  \end{beslut}
+  #(end)#
+  
+
+  \punkt{Övriga frågor}
+  #(range .Övriga)#
+  \textbf{\subpunkt #(.Titel)#}\\
+  #(.Brödtext)# 
+  #(else)#
+  Inga övriga frågor.
+  #(end)#
+
+  \punkt{Mötets högtidliga avslutande}
+
+	\skrivforordf förklarade mötet avslutat #(.Sluttid)#.
+  
+\end{document}
